@@ -34,11 +34,12 @@ import {Result} from '../dist/utils/result';
 declare const global: {HermesInternal: null | {}};
 
 const dummyPassword = 'shhhhhhh123';
-const testNodePubkey =
-  '034ecfd567a64f06742ac300a2985676abc0b1dc6345904a08bb52d5418e685f79';
-const testNodeAddress = '35.240.72.95:9735';
 
-const network = ENetworks.testnet;
+const testNodePubkey =
+  '024e9d7a7e3d2c414819a37003568a71bdc96f5a252dde10cb3a351646e195e98b';
+const testNodeAddress = '192.168.1.139:9735';
+
+const network = ENetworks.regtest;
 
 const App = () => {
   const [message, setMessage] = useState('');
@@ -102,9 +103,8 @@ const App = () => {
     }
   }, [lndState]);
 
-  const startLnd = async (): Promise<void> => {
+  const startLnd = async (customFields: any): Promise<void> => {
     setMessage('Starting LND...');
-    const customFields = {};
     const lndConf = new LndConf(network, customFields);
     const res = await lnd.start(lndConf);
 
@@ -152,17 +152,99 @@ const App = () => {
                   );
 
                   await lndCache.downloadCache(ENetworks.testnet);
-                  await startLnd();
+                  // await startLnd();
                 }}
               />
               <Button
-                title={'Start LND'}
+                title={'Start LND 18443'}
                 onPress={async () => {
-                  await startLnd();
+                  await startLnd({
+                    Bitcoind: {
+                      'bitcoind.rpchost': '192.168.1.139:18443',
+                      'bitcoind.rpcuser': 'polaruser',
+                      'bitcoind.rpcpass': 'polarpass',
+                      'bitcoind.zmqpubrawblock': 'tcp://192.168.1.139:28334',
+                      'bitcoind.zmqpubrawtx': 'tcp://192.168.1.139:29335',
+                    },
+                  });
+                }}
+              />
+
+              <Button
+                title={'Start LND 3002'}
+                onPress={async () => {
+                  await startLnd({
+                    Bitcoind: {
+                      'bitcoind.rpchost': '192.168.1.139:3002',
+                      'bitcoind.rpcuser': 'polaruser',
+                      'bitcoind.rpcpass': 'polarpass',
+                      'bitcoind.zmqpubrawblock': 'tcp://192.168.1.139:28334',
+                      'bitcoind.zmqpubrawtx': 'tcp://192.168.1.139:29335',
+                    },
+                  });
+                }}
+              />
+
+              <Button
+                title={'Start LND 3003 and 3004 and 3005'}
+                onPress={async () => {
+                  await startLnd({
+                    Bitcoind: {
+                      'bitcoind.rpchost': '192.168.1.139:3003',
+                      'bitcoind.rpcuser': 'polaruser',
+                      'bitcoind.rpcpass': 'polarpass',
+                      'bitcoind.zmqpubrawblock': 'tcp://192.168.1.139:3005',
+                      'bitcoind.zmqpubrawtx': 'tcp://192.168.1.139:3004',
+                      // 'bitcoind.zmqpubrawblock': 'tcp://192.168.1.139:28334',
+                      // 'bitcoind.zmqpubrawtx': 'tcp://192.168.1.139:29335',
+                    },
+                  });
+                }}
+              />
+
+              <Button
+                title={'Start BTCD testnet'}
+                onPress={async () => {
+                  await startLnd({
+                    Bitcoin: {
+                      'bitcoin.active': true,
+                      'bitcoin.regtest': true,
+                      'bitcoin.node': 'btcd',
+                    },
+                    Btcd: {
+                      // 'btcd.dir': '/Users/jason/Documents/btcd/.btcd',
+                      // 'btcd.rpchost': 'localhost',
+                      'btcd.rpchost': '127.0.0.1:18334',
+                      'btcd.rpcuser': 'rpcuser',
+                      'btcd.rpcpass': 'rpcpass',
+                      'btcd.rpccert': '/Users/jason/Desktop/rpc-reg.cert',
+                    },
+                  });
+                }}
+              />
+
+              <Button
+                title={'Start BTCD proxy testnet'}
+                onPress={async () => {
+                  await startLnd({
+                    Bitcoin: {
+                      'bitcoin.active': true,
+                      'bitcoin.regtest': true,
+                      'bitcoin.node': 'btcd',
+                    },
+                    Btcd: {
+                      'btcd.rpchost': '127.0.0.1:3003',
+                      'btcd.rpcuser': 'rpcuser',
+                      'btcd.rpcpass': 'rpcpass',
+                      'btcd.rpccert': '/Users/jason/Desktop/rpc-reg.cert',
+                    },
+                  });
                 }}
               />
             </>
           ) : (
+            //
+            //
             <Button
               title={'Stop LND'}
               onPress={async () => {
