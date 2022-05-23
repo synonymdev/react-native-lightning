@@ -501,6 +501,43 @@ class LND {
 			onUpdate(err(e));
 		}
 	}
+	
+	/**
+	 * LND getTransactions
+	 * Gets all known transactions relevant to wallet
+	 * @param startHeight
+	 * @param endHeight
+	 * @param account
+	 * @returns {Promise<Ok<lnrpc.TransactionDetails || Err<unknown>>}
+	 */
+	async getTransactions(
+		startHeight?: number,
+		endHeight?: number,
+		account?: string
+	): Promise<Result<lnrpc.TransactionDetails>> {
+		try {
+			const message = lnrpc.GetTransactionsRequest.create();
+
+			if (startHeight) {
+				message.startHeight = startHeight;
+			}
+			if (endHeight) {
+				message.endHeight = endHeight;
+			}
+			if (account) {
+				message.account = account;
+			}
+
+			const serializedResponse = await this.grpc.sendCommand(
+				EGrpcSyncMethods.GetTransactions,
+				lnrpc.GetTransactionsRequest.encode(message).finish()
+			);
+
+			return ok(lnrpc.TransactionDetails.decode(serializedResponse));
+		} catch (e) {
+			return err(e);
+		}
+	}
 
 	/**
 	 * LND subscribe to any changes in invoice states
