@@ -861,6 +861,48 @@ class LND {
 			return err(e);
 		}
 	}
+	
+	/**
+	 * LND SendCoins
+	 * Send onchain transaction to a single output
+	 */
+	async sendCoins(
+		address: string,
+		amount: number,
+		targetConf?: number,
+		feeRate?: number,
+		sendAll?: boolean,
+		label?: string
+	): Promise<Result<lnrpc.SendCoinsResponse>> {
+		try {
+			const message = lnrpc.SendCoinsRequest.create();
+
+			message.addr = address;
+			message.amount = amount;
+
+			if (targetConf) {
+				message.targetConf = targetConf;
+			}
+			if (feeRate) {
+				message.satPerVbyte = feeRate;
+			}
+			if (sendAll) {
+				message.sendAll = sendAll;
+			}
+			if (label) {
+				message.label = label;
+			}
+
+			const serializedResponse = await this.grpc.sendCommand(
+				EGrpcSyncMethods.SendCoins,
+				lnrpc.SendCoinsRequest.encode(message).finish()
+			);
+
+			return ok(lnrpc.SendCoinsResponse.decode(serializedResponse));
+		} catch (e) {
+			return err(e);
+		}
+	}
 }
 
 export default new LND();
