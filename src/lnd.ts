@@ -861,6 +861,24 @@ class LND {
 			return err(e);
 		}
 	}
+	
+	/**
+	 * LND DescribeGraph
+	 * @returns {Promise<Ok<lnrpc.ChannelGraph> | Err<unknown>>}
+	 */
+	async describeGraph(): Promise<Result<lnrpc.ChannelGraph>> {
+		try {
+			const message = lnrpc.ChannelGraphRequest.create();
+			const serializedResponse = await this.grpc.sendCommand(
+				EGrpcSyncMethods.DescribeGraph,
+				lnrpc.ChannelGraphRequest.encode(message).finish()
+			);
+
+			return ok(lnrpc.ChannelGraph.decode(serializedResponse));
+		} catch (e) {
+			return err(e);
+		}
+	}
 }
 
 export default new LND();
