@@ -1,7 +1,6 @@
 # react-native-lightning
 
-:warning: This is pre-alpha software. Please use at your own risk.
-
+:warning: We will review and merge any outside pull requests but this repo will no longer be actively maintained. Consider using [react-native-lightning](https://github.com/synonymdev/react-native-ldk) instead.
 
 ### Description
 This library hopes to simplify the process of adding Lightning via LND's Neutrino to any React-Native app.
